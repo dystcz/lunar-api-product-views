@@ -1,4 +1,4 @@
-# Track product views
+# Lunar API Product Views
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/dystcz/lunar-api-product-views.svg?style=flat-square)](https://packagist.org/packages/dystcz/lunar-api-product-views)
 [![Total Downloads](https://img.shields.io/packagist/dt/dystcz/lunar-api-product-views.svg?style=flat-square)](https://packagist.org/packages/dystcz/lunar-api-product-views)
