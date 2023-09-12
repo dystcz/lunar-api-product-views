@@ -2,7 +2,6 @@
 
 namespace Dystcz\LunarApiProductViews\Tests;
 
-use Dystcz\LunarApiProductViews\LunarApiProductViewsServiceProvider;
 use Dystcz\LunarApiProductViews\Tests\Stubs\JsonApi\V1\Server;
 use Dystcz\LunarApiProductViews\Tests\Stubs\Users\User;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -33,11 +32,13 @@ abstract class TestCase extends Orchestra
 
     /**
      * @param  Application  $app
-     * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
-        Config::set('lunar-api.additional_servers', [Server::class]);
+        Config::set(
+            'lunar-api.additional_servers',
+            [Server::class],
+        );
 
         return [
             // Laravel JsonApi
@@ -47,7 +48,7 @@ abstract class TestCase extends Orchestra
             \Dystcz\LunarApi\JsonApiServiceProvider::class,
 
             // Lunar API product views
-            LunarApiProductViewsServiceProvider::class,
+            \Dystcz\LunarApiProductViews\LunarApiProductViewsServiceProvider::class,
 
             // Lunar Api
             \Dystcz\LunarApi\LunarApiServiceProvider::class,
@@ -65,7 +66,7 @@ abstract class TestCase extends Orchestra
     /**
      * @param  Application  $app
      */
-    public function getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app): void
     {
         Config::set('database.default', 'sqlite');
 
