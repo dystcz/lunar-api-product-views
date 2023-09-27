@@ -23,7 +23,7 @@
         "php": "^8.2",
         "ext-redis": "*",
         "illuminate/support": "^10.0",
-        "dystcz/lunar-api": "^0.5",
+        "dystcz/lunar-api": "^0.6",
         "laravel-json-api/laravel": "^3.0"
     },
     "require-dev": {
