@@ -13,7 +13,7 @@ class LunarApiProductViews
      */
     public function enabled(): bool
     {
-        return Config::get('lunar-api-product-views.enabled', false);
+        return Config::get('lunar-api.product-views.enabled', false);
     }
 
     /**
