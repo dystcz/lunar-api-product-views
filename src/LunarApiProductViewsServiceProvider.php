@@ -2,47 +2,69 @@
 
 namespace Dystcz\LunarApiProductViews;
 
-use Dystcz\LunarApi\Domain\JsonApi\Extensions\Contracts\SchemaManifest;
-use Dystcz\LunarApi\Domain\JsonApi\Extensions\Schema\SchemaExtension;
+use Dystcz\LunarApi\Base\Extensions\SchemaExtension;
+use Dystcz\LunarApi\Base\Facades\SchemaManifestFacade;
 use Dystcz\LunarApi\Domain\Products\JsonApi\V1\ProductSchema;
 use Dystcz\LunarApiProductViews\Domain\Products\JsonApi\Sorts\RecentlyViewedSort;
 use Illuminate\Support\ServiceProvider;
 
 class LunarApiProductViewsServiceProvider extends ServiceProvider
 {
-    /** Bootstrap the application services.
-     */
-    public function boot()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('lunar-api-product-views.php'),
-            ], 'config');
-        }
-    }
+    protected $root = __DIR__.'/..';
 
     /**
      * Register the application services.
      */
-    public function register()
+    public function register(): void
     {
-        // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/lunar-api-product-views.php', 'lunar-api-product-views');
+        $this->registerConfig();
+
+        $this->extendSchemas();
 
         // Register the main class to use with the facade
         $this->app->singleton('lunar-api-product-views', function () {
             return new LunarApiProductViews;
         });
-
-        $this->extendSchemas();
     }
 
+    /**
+     * Bootstrap the application services.
+     */
+    public function boot(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishConfig();
+        }
+    }
+
+    /**
+     * Register config files.
+     */
+    protected function registerConfig(): void
+    {
+        $this->mergeConfigFrom(
+            "{$this->root}/config/product-views.php",
+            'lunar-api.product-views',
+        );
+    }
+
+    /**
+     * Publish config files.
+     */
+    protected function publishConfig(): void
+    {
+        $this->publishes([
+            "{$this->root}/config/product-views.php" => config_path('lunar-api.product-views.php'),
+        ], 'lunar-api-product-views');
+    }
+
+    /**
+     * Extend schemas.
+     */
     protected function extendSchemas(): void
     {
-        $schemaManifest = $this->app->make(SchemaManifest::class);
-
         /** @var SchemaExtension $productSchemaExtenstion */
-        $productSchemaExtenstion = $schemaManifest::for(ProductSchema::class);
+        $productSchemaExtenstion = SchemaManifestFacade::extend(ProductSchema::class);
 
         $productSchemaExtenstion->setSortables([
             RecentlyViewedSort::make('recently_viewed'),
