@@ -23,8 +23,7 @@
     "php": "^8.2",
     "ext-redis": "*",
     "illuminate/support": "^10.0",
-    "dystcz/lunar-api": "dev-feature/dyst-328-global-manifest",
-    "laravel-json-api/laravel": "^3.0"
+    "dystcz/lunar-api": "^0.6.0-dev"
   },
   "require-dev": {
     "laravel-json-api/testing": "^2.1",
@@ -68,11 +67,5 @@
     }
   },
   "minimum-stability": "dev",
-  "prefer-stable": true,
-  "repositories": {
-    "local": {
-      "type": "path",
-      "url": "../lunar-api"
-    }
-  }
+  "prefer-stable": true
 }
