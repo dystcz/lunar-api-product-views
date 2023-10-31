@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 uses(TestCase::class, RefreshDatabase::class);
 
 it('can record a view', function () {
+    /** @var TestCase $this */
     $productId = 1;
     app(LunarApiProductViews::class)->record($productId);
     app(LunarApiProductViews::class)->record($productId);
@@ -18,6 +19,7 @@ it('can record a view', function () {
 })->group('product-views');
 
 it('removes old entries', function () {
+    /** @var TestCase $this */
     $productId = 2;
 
     Redis::zAdd("product:views:{$productId}", time() - 60 * 60, Str::uuid()->toString());
@@ -32,6 +34,7 @@ it('removes old entries', function () {
 })->group('product-views');
 
 it('returns a list of product\'s ids sorted by most viewed', function () {
+    /** @var TestCase $this */
     app(LunarApiProductViews::class)->record(3);
     app(LunarApiProductViews::class)->record(4);
     app(LunarApiProductViews::class)->record(4);
