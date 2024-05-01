@@ -21,15 +21,14 @@
   ],
   "require": {
     "php": "^8.2",
-    "ext-redis": "*",
-    "illuminate/support": "^10.0",
-    "dystcz/lunar-api": "^0.8"
+    "dystcz/lunar-api": "^1.0.0-alpha",
+    "illuminate/support": "^11.0",
+    "ext-redis": "*"
   },
   "require-dev": {
-    "laravel-json-api/testing": "^2.1",
+    "laravel-json-api/testing": "^3.0",
     "laravel/pint": "^1.7",
-    "nunomaduro/collision": "^7.0",
-    "orchestra/testbench": "^8.0",
+    "orchestra/testbench": "^9.0",
     "pestphp/pest": "^2.0",
     "pestphp/pest-plugin-faker": "^2.0",
     "spatie/laravel-ray": "^1.32"
