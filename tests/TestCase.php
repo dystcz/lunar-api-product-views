@@ -2,19 +2,21 @@
 
 namespace Dystcz\LunarApiProductViews\Tests;
 
-use Dystcz\LunarApiProductViews\Tests\Stubs\Users\User;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Illuminate\Support\Facades\Redis;
 use LaravelJsonApi\Testing\MakesJsonApiRequests;
 use LaravelJsonApi\Testing\TestExceptionHandler;
 use Lunar\Database\Factories\LanguageFactory;
+use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
     use MakesJsonApiRequests;
+    use WithWorkbench;
 
     protected function setUp(): void
     {
@@ -24,8 +26,6 @@ abstract class TestCase extends Orchestra
             'code' => 'en',
             'name' => 'English',
         ]);
-
-        Config::set('auth.providers.users.model', User::class);
 
         activity()->disableLogging();
     }
@@ -55,10 +55,6 @@ abstract class TestCase extends Orchestra
             \LaravelJsonApi\Laravel\ServiceProvider::class,
             \LaravelJsonApi\Spec\ServiceProvider::class,
 
-            // Lunar Api
-            \Dystcz\LunarApi\LunarApiServiceProvider::class,
-            \Dystcz\LunarApi\JsonApiServiceProvider::class,
-
             // Lunar core
             \Lunar\LunarServiceProvider::class,
             \Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
@@ -66,6 +62,17 @@ abstract class TestCase extends Orchestra
             \Cartalyst\Converter\Laravel\ConverterServiceProvider::class,
             \Kalnoy\Nestedset\NestedSetServiceProvider::class,
             \Spatie\LaravelBlink\BlinkServiceProvider::class,
+
+            // Livewire
+            \Livewire\LivewireServiceProvider::class,
+
+            // Lunar Api
+            \Dystcz\LunarApi\LunarApiServiceProvider::class,
+            \Dystcz\LunarApi\JsonApiServiceProvider::class,
+
+            // Hashids
+            \Vinkla\Hashids\HashidsServiceProvider::class,
+            \Dystcz\LunarApi\LunarApiHashidsServiceProvider::class,
 
             // Lunar API product views
             \Dystcz\LunarApiProductViews\LunarApiProductViewsServiceProvider::class,
@@ -75,25 +82,28 @@ abstract class TestCase extends Orchestra
     /**
      * @param  Application  $app
      */
-    public function getEnvironmentSetUp($app): void
+    protected function defineEnvironment($app): void
     {
-        Config::set('database.default', 'sqlite');
+        $app->useEnvironmentPath(__DIR__.'/..');
+        $app->bootstrapWith([LoadEnvironmentVariables::class]);
 
-        Config::set('database.migrations', 'migrations');
+        tap($app['config'], function (Repository $config) {
+            /**
+             * App configuration.
+             */
+            $config->set('auth.providers.users', [
+                'driver' => 'eloquent',
+                'model' => \Dystcz\LunarApiProductViews\Tests\Stubs\Users\User::class,
+            ]);
 
-        Config::set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-    }
-
-    protected function resolveApplicationExceptionHandler($app): void
-    {
-        $app->singleton(
-            ExceptionHandler::class,
-            TestExceptionHandler::class
-        );
+            $config->set('database.default', 'sqlite');
+            $config->set('database.migrations', 'migrations');
+            $config->set('database.connections.sqlite', [
+                'driver' => 'sqlite',
+                'database' => ':memory:',
+                'prefix' => '',
+            ]);
+        });
     }
 
     /**
@@ -102,5 +112,14 @@ abstract class TestCase extends Orchestra
     protected function defineDatabaseMigrations(): void
     {
         $this->loadLaravelMigrations();
+        // $this->loadMigrationsFrom(workbench_path('database/migrations'));
+    }
+
+    protected function resolveApplicationExceptionHandler($app): void
+    {
+        $app->singleton(
+            ExceptionHandler::class,
+            TestExceptionHandler::class
+        );
     }
 }
